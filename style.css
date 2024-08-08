@@ -1,0 +1,59 @@
+body {
+    background-color: rgb(182, 202, 203);
+}
+
+#main {
+    width: 900px;
+    margin: auto;
+    text-align: center;
+    padding-top: 100px;
+    transition: opacity 3s;
+    opacity: 1;
+}
+
+h1 {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 55px;
+}
+
+h2 {
+    margin-top: 50px;
+}
+
+h3 {
+    margin-bottom: 50px;
+}
+
+#canvas-parent {
+    /* display: none; */
+    text-align: center;
+    animation: type 4s steps(60, end);
+    position: absolute;
+    /* margin: auto; */
+    top: 0;
+    z-index: -2;
+    opacity: 0;
+    transition: opacity 3s;
+}
+
+p {
+    width: 80%;
+    margin: auto;
+    margin-bottom: 20px;
+}
+
+
+#text2{
+    /* visibility: hidden; */
+    /* opacity: 0; */
+}
+
+#frame{
+    position: relative;
+    /* background-color: aliceblue; */
+    width: 1187.8px;
+    margin: auto;
+    /* margin-top: 0px; */
+    /* z-index: -10; */
+}
