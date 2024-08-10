@@ -707,6 +707,9 @@ function mouseReleased() {
 function instruction() { }
 
 function mouseClicked() {
+    if (music.isPlaying() == false) {
+        music.play();
+    }
 
     if (displaytext == true) {
         document.getElementById("main").style.opacity = 0
