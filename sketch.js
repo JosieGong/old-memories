@@ -194,9 +194,7 @@ function setup() {
 }
 
 function draw() {
-    if (music.isPlaying() == false) {
-        music.loop();
-    }
+
     music.setVolume(0.4)
     stream.setVolume(0.5)
     bell.setVolume(0.3)
@@ -644,6 +642,9 @@ class Scoop {
     }
 }
 function mousePressed() {
+    if (music.isPlaying() == false) {
+        music.loop();
+    }
     if (chiliwindow == true) {
         for (let i = chilinum - 1; i >= 0; i--) {
             if (checkdrag == true) {
@@ -704,12 +705,8 @@ function mouseReleased() {
 }
 
 
-function instruction() { }
 
 function mouseClicked() {
-    if (music.isPlaying() == false) {
-        music.play();
-    }
 
     if (displaytext == true) {
         document.getElementById("main").style.opacity = 0
