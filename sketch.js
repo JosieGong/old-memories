@@ -12,7 +12,7 @@ let stream
 let mainwindow = true
 let washwindow = false
 let homewindow = false
-let taskwindow = false
+let chiliwindow = false
 
 let fullvision
 let washclothes
@@ -73,7 +73,20 @@ let finish
 let stick
 let astick
 
-
+let garden
+let chili = []
+let chilinum = 22
+let chilix = []
+let chiliy = []
+let chilisize = []
+let onechili
+let chili1
+let chili2
+let checkdrag = true
+let bell
+let chilifinish = true
+let tinkle
+let chiliending
 // chnge a css attriute of this element
 
 
@@ -129,10 +142,18 @@ function preload() {
     hangp3g2 = loadImage("assets/晾粉右绿中.png")
     hangp3g2no = loadImage("assets/晾粉右绿中未选.png")
     hangp3g2y1 = loadImage("assets/晾粉右绿中黄左.png")
+    garden = loadImage("assets/花园.png")
+    chili1 = loadImage("assets/辣椒1.png")
+    chili2 = loadImage("assets/辣椒2.png")
+    tinkle = loadImage("assets/tinkle.png")
+    chiliinstru = loadImage("assets/chiliinstru.png")
+    chiliending = loadImage("assets/辣椒结束语.png")
 
     music = loadSound("music/music.mp3")
     sticksound = loadSound("music/stick.mp3")
     stream = loadSound("music/stream.mp3")
+    bell = loadSound("music/bell.mp3")
+    
 
 }
 
@@ -143,7 +164,33 @@ function setup() {
     scoop = new Scoop(scoopx, scoopy, scoop1, scoop2, scoop3, scoop4)
     clothes = new Clothes(300 / 2.3, 1200 / 2.3, tshirt, pants, skirt)
     astick = new Stick(100 / 2.3, 1700 / 2.3, stick)
-    // noCanvas()
+    for (let i = 0; i < chilinum; i++) {
+        if (i <= 4) {
+            chilix[i] = random(270, 470)
+            chiliy[i] = random(100, 250)
+            chilisize[i] = random(0.8, 1.2)
+        } else if (i <= 10) {
+            chilix[i] = random(750, 950)
+            chiliy[i] = random(100, 250)
+            chilisize[i] = random(0.8, 1.2)
+        } else if (i <= 15) {
+            chilix[i] = random(130, 410)
+            chiliy[i] = random(450, 530)
+            chilisize[i] = random(1, 1.4)
+        }
+        else {
+            chilix[i] = random(850, 1100)
+            chiliy[i] = random(500, 680)
+            chilisize[i] = random(1, 1.4)
+        }
+        if (i % 2 == 1) {
+            onechili = chili1
+        } else {
+            onechili = chili2
+        }
+        chili[i] = new Chili(chilix[i], chiliy[i], chilisize[i], onechili)
+    }
+
 }
 
 function draw() {
@@ -152,6 +199,7 @@ function draw() {
     }
     music.setVolume(0.4)
     stream.setVolume(0.5)
+    bell.setVolume(0.3)
     background(210, 230, 200)
     if (mainwindow == true) {
         mainWindow()
@@ -162,8 +210,9 @@ function draw() {
     if (homewindow == true) {
         homeWindow()
     }
-
-
+    if (chiliwindow == true) {
+        chiliWindow()
+    }
     // time()
     // timeDisplay()
     returnButton()
@@ -384,6 +433,62 @@ function homeWindow() {
     image(home, 0, 0, 1187.8, 890.4)
 }
 
+function chiliWindow() {
+    image(garden, 0, 0, 1187.8, 890.4)
+    chilifinish = true
+    tinkleappear = false
+    for (let i = 0; i < chilinum; i++) {
+        chili[i].display()
+        chili[i].update()
+        if (chili[i].notStop == true) {
+            chilifinish = false
+        } else{tinkleappear = true}
+    }
+    if (tinkleappear == true){image(tinkle,0,0,1187.8, 890.4)}
+    else{image(chiliinstru,0,0,1187.8, 890.4)}
+    if (chilifinish == true){image(chiliending,0,0,1187.8, 890.4)}
+
+}
+class Chili {
+    constructor(x, y, size, image) {
+        this.x = x
+        this.y = y
+        this.size = size
+        this.img = image
+        this.isDragged = false
+        this.notStop = true
+    }
+    update() {
+        if (this.notStop == true) {
+            if (this.isDragged == true) {
+                this.x = mouseX + disx
+                this.y = mouseY + disy
+            }
+        }
+    }
+    display() {
+        push()
+        translate(this.x, this.y)
+        image(this.img, 0, 0, 32, 64)
+        pop()
+    }
+
+    checkIsPressed() {
+        if (this.x + 5 <= mouseX &&
+            mouseX <= this.x + 27 &&
+            this.y <= mouseY &&
+            mouseY + 1 <= this.y + 63) {
+            this.isDragged = true
+            checkdrag = false
+            if (disx == 0 && disy == 0) {
+                disx = this.x - mouseX
+                disy = this.y - mouseY
+
+            }
+        }
+    }
+
+}
 class Stick {
     constructor(x, y, img) {
         this.img = img
@@ -453,14 +558,9 @@ class Clothes {
     }
     update() {
         if (this.isDragged == true) {
-            // if(clothesstep<=2){
             this.x = mouseX - 120 * 2 / 2.3
             this.y = mouseY - 150 * 2 / 2.3
         }
-        // else if (clothesstep=3){            
-        //     this.x = mouseX - 120
-        //     this.y = mouseY - 150}
-        // }
     }
     display() {
         push()
@@ -544,6 +644,13 @@ class Scoop {
     }
 }
 function mousePressed() {
+    if (chiliwindow == true) {
+        for (let i = chilinum - 1; i >= 0; i--) {
+            if (checkdrag == true) {
+                chili[i].checkIsPressed()
+            }
+        }
+    }
     if (washwindow == true) {
         if (washclothesstep == 0) {
             scoop.checkIsPressed()
@@ -559,6 +666,23 @@ function mousePressed() {
     }
 }
 function mouseReleased() {
+    if (chiliwindow == true) {
+        for (let i = 0; i < chilinum; i++) {
+            chili[i].isDragged = false
+            disx = 0
+            disy = 0
+            if (100 <= chili[i].x &&
+                chili[i].x <= 700 &&
+                600 <= chili[i].y &&
+                chili[i].y <= 850
+            ) {
+                if (chili[i].notStop == true) {
+                    bell.play()
+                } chili[i].notStop = false
+            }
+        }
+        checkdrag = true
+    }
     if (washwindow == true) {
         if (washclothesstep == 0) {
             scoop.isDragged = false
@@ -598,7 +722,7 @@ function mouseClicked() {
             mouseY <= 850) {
             mainwindow = false
             washwindow = true
-            stream.play()
+            stream.loop()
         }
         if (540 <= mouseX &&
             mouseX <= 680 &&
@@ -611,7 +735,6 @@ function mouseClicked() {
     //return button
     // in wash window
     if (mainwindow == false) {
-        //to washwindow
         if (30 <= mouseX &&
             mouseX <= 30 + (50 * 2 / 2.3) &&
             30 * 2 / 2.3 <= mouseY &&
@@ -619,214 +742,228 @@ function mouseClicked() {
             mainwindow = true
             if (washwindow == true) { washwindow = false }
             if (homewindow == true) { homewindow = false }
+            if (chiliwindow == true) { chiliwindow = false }
         }
-        //getwater1
-        if (washclothesstep == 0) {
-            if (waterstep == 0 || waterstep == 3 || waterstep == 6) {
-                if (scoop.y <= 280) {
-                    if ((scoop.x + 15 * 2 / 2.3 <= mouseX &&
-                        mouseX <= scoop.x + 95 * 2 / 2.3 &&
-                        scoop.y + 55 * 2 / 2.3 <= mouseY &&
-                        mouseY <= scoop.y + 105 * 2 / 2.3) ||
-                        (scoop.x + 95 * 2 / 2.3 <= mouseX &&
-                            mouseX <= scoop.x + 295 * 2 / 2.3 &&
-                            scoop.y + 10 * 2 / 2.3 <= mouseY &&
-                            mouseY <= scoop.y + 135 * 2 / 2.3)) {
-                        waterstep += 1
-                        scoop.timecount = 0
+        if (homewindow == true) {
+            if (240 <= mouseX &&
+                mouseX <= 375 &&
+                350 <= mouseY &&
+                mouseY <= 380) {
+                homewindow = false
+                chiliwindow = true
+            }
+        }
+
+        if (washwindow == true) {
+            //getwater1
+            if (washclothesstep == 0) {
+                if (waterstep == 0 || waterstep == 3 || waterstep == 6) {
+                    if (scoop.y <= 280) {
+                        if ((scoop.x + 15 * 2 / 2.3 <= mouseX &&
+                            mouseX <= scoop.x + 95 * 2 / 2.3 &&
+                            scoop.y + 55 * 2 / 2.3 <= mouseY &&
+                            mouseY <= scoop.y + 105 * 2 / 2.3) ||
+                            (scoop.x + 95 * 2 / 2.3 <= mouseX &&
+                                mouseX <= scoop.x + 295 * 2 / 2.3 &&
+                                scoop.y + 10 * 2 / 2.3 <= mouseY &&
+                                mouseY <= scoop.y + 135 * 2 / 2.3)) {
+                            waterstep += 1
+                            scoop.timecount = 0
+                        }
+                    }
+                } else if (waterstep == 1 || waterstep == 4 || waterstep == 7) {
+                    if (scoop.y >= 370 && scoop.y <= 530 && scoop.x <= 320 && scoop.x >= 30) {
+                        if ((scoop.x + 15 * 2 / 2.3 <= mouseX &&
+                            mouseX <= scoop.x + 95 * 2 / 2.3 &&
+                            scoop.y + 55 * 2 / 2.3 <= mouseY &&
+                            mouseY <= scoop.y + 105 * 2 / 2.3) ||
+                            (scoop.x + 95 * 2 / 2.3 <= mouseX &&
+                                mouseX <= scoop.x + 295 * 2 / 2.3 &&
+                                scoop.y + 10 * 2 / 2.3 <= mouseY &&
+                                mouseY <= scoop.y + 135 * 2 / 2.3)) {
+                            waterstep += 1;
+                            scoop.timecount = 0
+                        }
                     }
                 }
-            } else if (waterstep == 1 || waterstep == 4 || waterstep == 7) {
-                if (scoop.y >= 370 && scoop.y <= 530 && scoop.x <= 320 && scoop.x >= 30) {
-                    if ((scoop.x + 15 * 2 / 2.3 <= mouseX &&
-                        mouseX <= scoop.x + 95 * 2 / 2.3 &&
-                        scoop.y + 55 * 2 / 2.3 <= mouseY &&
-                        mouseY <= scoop.y + 105 * 2 / 2.3) ||
-                        (scoop.x + 95 * 2 / 2.3 <= mouseX &&
-                            mouseX <= scoop.x + 295 * 2 / 2.3 &&
-                            scoop.y + 10 * 2 / 2.3 <= mouseY &&
-                            mouseY <= scoop.y + 135 * 2 / 2.3)) {
-                        waterstep += 1;
-                        scoop.timecount = 0
-                    }
+
+            } // draw the clothes
+            else if (washclothesstep == 1) {
+                if (clothesstep == 0) {
+                    if (mouseX <= 540 * 2 / 2.3 &&
+                        mouseX >= 120 * 2 / 2.3 &&
+                        mouseY <= 700 * 2 / 2.3 &&
+                        mouseY >= 570 * 2 / 2.3) { clothesstep = 1 }
+
+                } else if (clothesstep == 1) {
+                    if (mouseX <= 1180 &&
+                        mouseX >= 640 * 2 / 2.3 &&
+                        mouseY <= 890 &&
+                        mouseY >= 500 * 2 / 2.3) { clothesstep = 2 }
+                } else if (clothesstep == 2) {
+                    if (mouseX <= 1180 &&
+                        mouseX >= 120 * 2 / 2.3 &&
+                        mouseY <= 700 * 2 / 2.3 &&
+                        mouseY >= 570 * 2 / 2.3) { clothesstep = 3 }
+                } else if (clothesstep == 3) {
+                    if (mouseX <= 1180 &&
+                        mouseX >= 640 * 2 / 2.3 &&
+                        mouseY <= 890 &&
+                        mouseY >= 500 * 2 / 2.3) { clothesstep = 4 }
+                } else if (clothesstep == 4) {
+                    if (mouseX <= 540 * 2 / 2.3 &&
+                        mouseX >= 120 * 2 / 2.3 &&
+                        mouseY <= 700 * 2 / 2.3 &&
+                        mouseY >= 570 * 2 / 2.3) { clothesstep = 5 }
+                } else if (clothesstep == 5) {
+                    if (mouseX <= 1180 &&
+                        mouseX >= 640 * 2 / 2.3 &&
+                        mouseY <= 890 &&
+                        mouseY >= 500 * 2 / 2.3) { clothesstep = 6 }
                 }
-            }
-
-        } // draw the clothes
-        else if (washclothesstep == 1) {
-            if (clothesstep == 0) {
-                if (mouseX <= 540 * 2 / 2.3 &&
-                    mouseX >= 120 * 2 / 2.3 &&
-                    mouseY <= 700 * 2 / 2.3 &&
-                    mouseY >= 570 * 2 / 2.3) { clothesstep = 1 }
-
-            } else if (clothesstep == 1) {
-                if (mouseX <= 1180 &&
-                    mouseX >= 640 * 2 / 2.3 &&
-                    mouseY <= 890 &&
-                    mouseY >= 500 * 2 / 2.3) { clothesstep = 2 }
-            } else if (clothesstep == 2) {
-                if (mouseX <= 1180 &&
-                    mouseX >= 120 * 2 / 2.3 &&
-                    mouseY <= 700 * 2 / 2.3 &&
-                    mouseY >= 570 * 2 / 2.3) { clothesstep = 3 }
-            } else if (clothesstep == 3) {
-                if (mouseX <= 1180 &&
-                    mouseX >= 640 * 2 / 2.3 &&
-                    mouseY <= 890 &&
-                    mouseY >= 500 * 2 / 2.3) { clothesstep = 4 }
-            } else if (clothesstep == 4) {
-                if (mouseX <= 540 * 2 / 2.3 &&
-                    mouseX >= 120 * 2 / 2.3 &&
-                    mouseY <= 700 * 2 / 2.3 &&
-                    mouseY >= 570 * 2 / 2.3) { clothesstep = 5 }
-            } else if (clothesstep == 5) {
-                if (mouseX <= 1180 &&
-                    mouseX >= 640 * 2 / 2.3 &&
-                    mouseY <= 890 &&
-                    mouseY >= 500 * 2 / 2.3) { clothesstep = 6 }
-            }
-        } //hit the clothes
-        else if (washclothesstep == 2) {
-            if (mouseX <= 1000 &&
-                mouseX >= 600 &&
-                mouseY <= 1000 &&
-                mouseY >= 550 * 2 / 2.3) {
-                astick.isStriking = true
-                sticksound.play(1)
-            }
-        } //hang the clothes
-        else if (washclothesstep == 3) {
-            console.log(mouseX)
-            console.log(mouseY)
-            if (hangclothesstep == 0) {
+            } //hit the clothes
+            else if (washclothesstep == 2) {
                 if (mouseX <= 1000 &&
-                    mouseX >= 750 &&
-                    mouseY <= 700 &&
-                    mouseY >= 500
-                ) {
-                    hangclothesstep = 1;
-                    clothesstep = 5
-                    clothes.x = mouseX - 120 * 2 / 2.3
-                    clothes.y = mouseY - 150 * 2 / 2.3
+                    mouseX >= 600 &&
+                    mouseY <= 1000 &&
+                    mouseY >= 550 * 2 / 2.3) {
+                    astick.isStriking = true
+                    sticksound.play(1)
                 }
-            } else if (hangclothesstep == 1) {
-                //left hanger
-                if (mouseX <= 380 &&
-                    mouseX >= 200 &&
-                    mouseY >= 190 &&
-                    mouseY <= 250
-                ) {
-                    hangclothesstep = 2
-                    chooseposition[0] = 1
-                }
-                //middle hanger
-                else if (mouseX <= 600 &&
-                    mouseX >= 470 &&
-                    mouseY >= 190 &&
-                    mouseY <= 250) {
-                    hangclothesstep = 2
-                    chooseposition[0] = 2
-                }
-                else if (mouseX <= 830 &&
-                    mouseX >= 720 &&
-                    mouseY >= 190 &&
-                    mouseY <= 250) {
-                    hangclothesstep = 2
-                    chooseposition[0] = 3
-                }
-            } else if (hangclothesstep == 2) {
-                if (mouseX <= 980 &&
-                    mouseX >= 800 &&
-                    mouseY <= 750 &&
-                    mouseY >= 640
-                ) {
-                    hangclothesstep = 3;
-                    clothesstep = 3
-                    clothes.x = mouseX - 120 * 2 / 2.3
-                    clothes.y = mouseY - 150 * 2 / 2.3
-                }
-            } else if (hangclothesstep == 3) {
-                //left hanger
-                if (chooseposition[0] != 1) {
+            } //hang the clothes
+            else if (washclothesstep == 3) {
+                console.log(mouseX)
+                console.log(mouseY)
+                if (hangclothesstep == 0) {
+                    if (mouseX <= 1000 &&
+                        mouseX >= 750 &&
+                        mouseY <= 700 &&
+                        mouseY >= 500
+                    ) {
+                        hangclothesstep = 1;
+                        clothesstep = 5
+                        clothes.x = mouseX - 120 * 2 / 2.3
+                        clothes.y = mouseY - 150 * 2 / 2.3
+                    }
+                } else if (hangclothesstep == 1) {
+                    //left hanger
                     if (mouseX <= 380 &&
                         mouseX >= 200 &&
                         mouseY >= 190 &&
                         mouseY <= 250
                     ) {
-                        hangclothesstep = 4
-                        chooseposition[1] = 1
+                        hangclothesstep = 2
+                        chooseposition[0] = 1
                     }
-                }
-                //middle hanger
-                if (chooseposition[0] != 2) {
-                    if (mouseX <= 600 &&
+                    //middle hanger
+                    else if (mouseX <= 600 &&
                         mouseX >= 470 &&
                         mouseY >= 190 &&
                         mouseY <= 250) {
-                        hangclothesstep = 4
-                        chooseposition[1] = 2
+                        hangclothesstep = 2
+                        chooseposition[0] = 2
                     }
-                }
-                if (chooseposition[0] != 3) {
-                    if (mouseX <= 830 &&
+                    else if (mouseX <= 830 &&
                         mouseX >= 720 &&
                         mouseY >= 190 &&
                         mouseY <= 250) {
-                        hangclothesstep = 4
-                        chooseposition[1] = 3
+                        hangclothesstep = 2
+                        chooseposition[0] = 3
                     }
-                }
-            } else if (hangclothesstep == 4) {
-                if (mouseX <= 1050 &&
-                    mouseX >= 790 &&
-                    mouseY <= 850 &&
-                    mouseY >= 700
-                ) {
-                    hangclothesstep = 5;
-                    clothesstep = 1
-                    clothes.x = mouseX - 120 * 2 / 2.3
-                    clothes.y = mouseY - 150 * 2 / 2.3
-                }
-            } else if (hangclothesstep == 5) {
-                let left = 6 - chooseposition[0] - chooseposition[1]
-                //left hanger
-                if (left == 1) {
-                    if (mouseX <= 380 &&
-                        mouseX >= 200 &&
-                        mouseY >= 190 &&
-                        mouseY <= 250
+                } else if (hangclothesstep == 2) {
+                    if (mouseX <= 980 &&
+                        mouseX >= 800 &&
+                        mouseY <= 750 &&
+                        mouseY >= 640
                     ) {
-                        hangclothesstep = 6
-                        chooseposition[3] = 1
+                        hangclothesstep = 3;
+                        clothesstep = 3
+                        clothes.x = mouseX - 120 * 2 / 2.3
+                        clothes.y = mouseY - 150 * 2 / 2.3
+                    }
+                } else if (hangclothesstep == 3) {
+                    //left hanger
+                    if (chooseposition[0] != 1) {
+                        if (mouseX <= 380 &&
+                            mouseX >= 200 &&
+                            mouseY >= 190 &&
+                            mouseY <= 250
+                        ) {
+                            hangclothesstep = 4
+                            chooseposition[1] = 1
+                        }
+                    }
+                    //middle hanger
+                    if (chooseposition[0] != 2) {
+                        if (mouseX <= 600 &&
+                            mouseX >= 470 &&
+                            mouseY >= 190 &&
+                            mouseY <= 250) {
+                            hangclothesstep = 4
+                            chooseposition[1] = 2
+                        }
+                    }
+                    if (chooseposition[0] != 3) {
+                        if (mouseX <= 830 &&
+                            mouseX >= 720 &&
+                            mouseY >= 190 &&
+                            mouseY <= 250) {
+                            hangclothesstep = 4
+                            chooseposition[1] = 3
+                        }
+                    }
+                } else if (hangclothesstep == 4) {
+                    if (mouseX <= 1050 &&
+                        mouseX >= 790 &&
+                        mouseY <= 850 &&
+                        mouseY >= 700
+                    ) {
+                        hangclothesstep = 5;
+                        clothesstep = 1
+                        clothes.x = mouseX - 120 * 2 / 2.3
+                        clothes.y = mouseY - 150 * 2 / 2.3
+                    }
+                } else if (hangclothesstep == 5) {
+                    let left = 6 - chooseposition[0] - chooseposition[1]
+                    //left hanger
+                    if (left == 1) {
+                        if (mouseX <= 380 &&
+                            mouseX >= 200 &&
+                            mouseY >= 190 &&
+                            mouseY <= 250
+                        ) {
+                            hangclothesstep = 6
+                            chooseposition[3] = 1
+                        }
+                    }
+                    //middle hanger
+                    if (left == 2) {
+                        if (mouseX <= 600 &&
+                            mouseX >= 470 &&
+                            mouseY >= 190 &&
+                            mouseY <= 250) {
+                            hangclothesstep = 6
+                            chooseposition[3] = 2
+                        }
+                    }
+                    if (left == 3) {
+                        if (mouseX <= 830 &&
+                            mouseX >= 720 &&
+                            mouseY >= 190 &&
+                            mouseY <= 250) {
+                            hangclothesstep = 6
+                            chooseposition[3] = 3
+                        }
                     }
                 }
-                //middle hanger
-                if (left == 2) {
-                    if (mouseX <= 600 &&
-                        mouseX >= 470 &&
-                        mouseY >= 190 &&
-                        mouseY <= 250) {
-                        hangclothesstep = 6
-                        chooseposition[3] = 2
-                    }
-                }
-                if (left == 3) {
-                    if (mouseX <= 830 &&
-                        mouseX >= 720 &&
-                        mouseY >= 190 &&
-                        mouseY <= 250) {
-                        hangclothesstep = 6
-                        chooseposition[3] = 3
-                    }
-                }
+
+
             }
-
-
         }
     }
-
 }
+
+
 
 function returnButton() {
     if (mainwindow == false) {
