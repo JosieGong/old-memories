@@ -200,6 +200,7 @@ function draw() {
     bell.setVolume(0.3)
     background(210, 230, 200)
     if (mainwindow == true) {
+        stream.stop()
         mainWindow()
     }
     if (washwindow == true) {
